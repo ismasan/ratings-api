@@ -21,34 +21,34 @@ app.use(function(req, res, next) {
     next();
 })
 
-app.post('/:app_key/ratings', function (req, res) {
+function findAccount (req, res, next) {
+  db.findAccount(req.params.app_key, function (err, account) {
+    req.account = account
+    next()
+  })
+}
+
+app.post('/:app_key/ratings', findAccount, function (req, res) {
   
   // validate payload here
   
-  db.findAccount(req.params.app_key, function (err, account) {
-    account.addRating(req.body, function (err, item) {
-      res.send(item.toJSON())
-    })
+  req.account.addRating(req.body, function (err, item) {
+    res.send(item.toJSON())
   })
   
 })
 
-app.get('/:app_key/ratings', function(req, res) {
+app.get('/:app_key/ratings', findAccount, function(req, res) {
   
-  db.findAccount(req.params.app_key, function (err, account) {
-
-    if(!req.query.uids) {
-      console.log('ALL ITEMS', account.items)
-      res.send(404, {error: "you need to pass comma-separated :uids in query string"})
-      return
-    }
-    
-    account.allItemsByUids(req.query.uids.split(','), function (err, items) {
-      console.log('ITEMS', items)
-      res.send(items.map(function (item) {
-        return item.toJSON()
-      }))
-    })
+  if(!req.query.uids) {
+    res.send(404, {error: "you need to pass comma-separated :uids in query string"})
+    return
+  }
+  
+  req.account.allItemsByUids(req.query.uids.split(','), function (err, items) {
+    res.send(items.map(function (item) {
+      return item.toJSON()
+    }))
   })
 
 });
