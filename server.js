@@ -28,6 +28,22 @@ function findAccount (req, res, next) {
   })
 }
 
+app.get('/', function (req, res) {
+  db.allAccounts(function (err, accounts) {
+    res.send(accounts.map(function (a) {
+      return a.toJSON()
+    }))    
+  })
+})
+
+app.get('/:app_key', findAccount, function (req, res) {
+  req.account.allItems(function (err, items) {
+    res.send(items.map(function (a) {
+      return a.toJSON()
+    }))
+  })
+})
+
 app.post('/:app_key/ratings', findAccount, function (req, res) {
   
   // validate payload here
