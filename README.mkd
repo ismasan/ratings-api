@@ -1,0 +1,44 @@
+# JSON Ratings API
+
+## Create rating
+
+### Request
+
+    POST /:account_key/ratings
+    
+    {"uid": "http://site.bootic.net/products/foobar", "rating": 4}
+
+### Response
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+    
+### CURL
+
+    $ curl -XPOST -H"Content-Type:application/json" -d'{"uid":"uid1","rating":2}' http://bootic-ratings-service.herokuapp.com/foo/ratings
+
+## Fetch ratings for several item UIDs
+
+### Request
+    GET /:account_key/ratings
+
+    {
+      "uids": [
+        "http://site.bootic.net/products/foobar",
+        "http://site.bootic.net/products/barfoo",
+        "http://site.bootic.net/products/ipod"
+      ]
+    }
+
+### Response
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+
+    [
+      {"uid": "http://site.bootic.net/products/foobar", "rating": 3, "ratings_count":3},
+      {"uid": "http://site.bootic.net/products/barfoo", "rating": 4, "ratings_count":20},
+      {"uid": "http://site.bootic.net/products/ipod", "rating": 5, "ratings_count":4}
+    ]
+    
+### CURL
+
+    $ curl -i "http://bootic-ratings-service.herokuapp.com/foo/ratings?uids=uid1,uid2"
